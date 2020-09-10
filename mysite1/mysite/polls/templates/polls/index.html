@@ -1,0 +1,86 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/extjs/6.0.0/classic/theme-classic/resources/theme-classic-all.css"/>
+</head>
+<body>
+    <div id="app"></div>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/extjs/6.2.0/ext-all.js"></script>
+    <script>
+        let dataArr = [];
+        for(let i=2; i<=11; i++){
+            fetch(`http://127.0.0.1:8000/${i}/`)
+            .then(response => response.json())
+            .then(commits => joinObj(commits));
+        }
+        function joinObj(commits){
+            dataArr.push(commits)
+            console.log(dataArr)
+            if (dataArr.length == 10){
+                dataGrid()
+            }
+        }
+        function dataGrid(){
+        Ext.create('Ext.data.Store', {
+            autoLoad: true,
+    storeId: 'Store',
+    fields:[ 'id', 'field1', 'field2','field3','field4','field5','field6','field7','field8','field9','field10'],
+    data: dataArr
+});
+
+Ext.create('Ext.grid.Panel', {
+    title: 'Table',
+    store: Ext.data.StoreManager.lookup('Store'),
+    columns: [
+        { text: 'Name', dataIndex: 'id' },
+        { text: 'field1', dataIndex: 'field1' },
+        { text: 'field2', dataIndex: 'field2' },
+        { text: 'field3', dataIndex: 'field3' },
+        { text: 'field4', dataIndex: 'field4' },
+        { text: 'field5', dataIndex: 'field5' },
+        { text: 'field6', dataIndex: 'field6' },
+        { text: 'field7', dataIndex: 'field7' },
+        { text: 'field8', dataIndex: 'field8' },
+        { text: 'field9', dataIndex: 'field9' },
+        { text: 'field10', dataIndex: 'field10' },
+    ],
+    
+    height: 200,
+    width: 400,
+    renderTo: Ext.getBody()
+    
+});
+}
+       var container = Ext.create('Ext.form.FormPanel', {
+    title      : 'Sample TextArea',
+    width      : 300,
+    renderTo   : Ext.getBody(),
+    
+    items: [
+    {
+      xtype: 'textfield',
+      name: 'firstName',
+      emptyText: 'First Name',
+      maxLength: 20,
+      minLength: 1,
+      regex: /^([A-Za-z])+([A-Za-z0-9.-])+([A-Za-z0-9])$/,
+      regexText: "<b>Error</b></br>Invalid Number entered.",
+      width: 250
+    },
+    {
+      xtype: 'button',
+      text: 'click me',
+      handler: function() {
+        console.log(Ext.ComponentQuery.query('textfield[name=firstName]')[0].wasValid);
+      }
+    }
+  ]
+});
+    </script>
+</body>
+</html>
